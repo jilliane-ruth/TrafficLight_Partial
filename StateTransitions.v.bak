@@ -1,0 +1,63 @@
+module StateTransitions (clk, reset, CAR, TIMEOUT, green, yellow, red);
+  input clk, reset, CAR; 
+  input [5:0] TIMEOUT;
+  output reg green, yellow, red;
+
+  reg [1:0]presState, nextState; //y- presState, Y- nextState
+  
+
+ parameter Green = 2'b00, Yellow = 2'b01, Red = 2'b10;
+
+  always @(posedge clk , posedge reset) begin
+    if(reset == 0) begin
+      presState <= Green;
+      TIMEOUT <= 0;
+    end 
+    else begin
+      case(presState) 
+        Green:
+          if (CAR == 1) begin
+            nextState = Yellow;
+          end
+          else begin 
+            nextState = Green; 
+          end 
+        Yellow:
+          if (CAR == 1) begin
+            nextState = Red;
+          end 
+          else begin
+            nextState = Yellow;
+          end
+        Red:
+          if(TIMEOUT ==  5'b10011) begin 
+            nextState = Green
+          end
+          else begin
+            nextState = Red;
+          end
+
+        default: nextState = Green;
+   
+      endcase
+     end
+  end
+
+  //timer logic
+  
+  always @(posedge clk, negedge reset) begin
+    if (reset == 0) begin
+      presState <= Green;
+      TIMEOUT <= 0;
+    end
+    else begin
+      presState <= nextState; 
+      if (presState == Red && TIMEOUT < 5'b10011) begin
+        TIMEOUT <= TIMEOUT + 1;
+      end
+    end
+  end
+
+  //output logic
+
+endmodule

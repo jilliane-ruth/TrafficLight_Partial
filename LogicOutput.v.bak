@@ -1,0 +1,37 @@
+module LogicOutput(presState, green, yellow, red);
+	input clk, reset, car;
+	output reg timeout;
+	output reg green, yellow, red;
+	
+	StateTransitions (clk, reset, car, timeout);
+	
+	always@(*) begin
+		case(presState) begin
+			green: begin
+				green = 1;
+				yellow = 0;
+				red = 0;
+			end
+			yellow: begin
+				green = 0;
+				yellow = 1;
+				red = 0;
+			end
+			yellow: begin
+				green = 0;
+				yellow = 0;
+				red = 1;
+			end
+				
+		
+		
+		
+		endcase
+	
+	
+	
+	end
+
+
+
+endmodule
